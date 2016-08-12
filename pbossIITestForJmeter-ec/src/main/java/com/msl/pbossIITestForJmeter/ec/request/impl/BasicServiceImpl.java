@@ -58,6 +58,7 @@ public class BasicServiceImpl extends AbstractAsyncReq {
                 basicServiceProdInfoList.add(basicServiceProdInfo);
             }
             basicServiceInfo.setProdInfo(basicServiceProdInfoList);
+            basicServiceInfo.setProvinceID(basicServiceInfoElement.elementTextTrim("ProvinceID"));
 
             basicServiceInfoList.add(basicServiceInfo);
         }

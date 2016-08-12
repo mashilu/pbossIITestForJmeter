@@ -1,6 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.sync.UdmOrderResponse;
+import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmOrderRequest;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class QueryOrderInfoImpl {
 
-    public UdmOrderResponse sendOrderSyncReq(String ip, int port, String jsonStr) {
-        UdmOrderResponse orderResponse = null;
+    public Response sendOrderSyncReq(String ip, int port, String jsonStr) {
+        Response orderResponse = null;
         NettyTransceiver client = null;
         UdmOrderRequest request = createOrderRequest(jsonStr);
         System.out.print("Request:" + request);

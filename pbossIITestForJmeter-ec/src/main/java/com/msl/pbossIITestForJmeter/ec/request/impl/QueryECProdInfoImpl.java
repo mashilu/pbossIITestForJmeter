@@ -1,8 +1,8 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
+import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmECProdRequest;
-import com.chinamobile.iot.udm.api.reverse.sync.UdmECProductResponse;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -17,8 +17,8 @@ import java.net.InetSocketAddress;
  */
 public class QueryECProdInfoImpl {
 
-    public UdmECProductResponse sendECProdSyncReq(String ip, int port, String jsonStr) {
-        UdmECProductResponse orderResponse = null;
+    public Response sendECProdSyncReq(String ip, int port, String jsonStr) {
+        Response orderResponse = null;
         NettyTransceiver client = null;
         UdmECProdRequest request = createECProdRequest(jsonStr);
         System.out.print("Request:" + request);
@@ -36,9 +36,12 @@ public class QueryECProdInfoImpl {
         return orderResponse;
     }
 
-    public static UdmECProdRequest createECProdRequest(String xmlStr) {
+    private static UdmECProdRequest createECProdRequest(String xmlStr) {
         UdmECProdRequest ecProdRequest = new UdmECProdRequest();
         Element root= XmlParser.getRootElement(xmlStr);
+
+        if (root == null)
+            return null;
 
         ecProdRequest.setProvinceID(root.elementTextTrim("ProvinceID"));
         ecProdRequest.setQueryType(root.elementTextTrim("QueryType"));

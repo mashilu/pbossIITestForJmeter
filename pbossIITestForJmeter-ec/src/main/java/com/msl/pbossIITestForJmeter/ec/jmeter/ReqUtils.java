@@ -1,8 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.jmeter;
 
 import com.chinamobile.iot.udm.api.reverse.async.Response;
-import com.chinamobile.iot.udm.api.reverse.sync.UdmECProductResponse;
-import com.chinamobile.iot.udm.api.reverse.sync.UdmOrderResponse;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.impl.QueryECProdInfoImpl;
 import com.msl.pbossIITestForJmeter.ec.request.impl.QueryOrderInfoImpl;
@@ -91,7 +89,7 @@ public class ReqUtils {
             return sr;
         }
 
-        if (reqType != "OrderRequest" && reqType != "ECProdRequest") {
+        if (!reqType.equals("OrderRequest") && !reqType.equals("ECProdRequest")) {
             try {
                 System.out.println(getReqTypeMapClass.get(reqType));
                 req = (AbstractAsyncReq) Class.forName(getReqTypeMapClass.get(reqType)).newInstance();
@@ -115,12 +113,13 @@ public class ReqUtils {
                 sr.sampleEnd();
             }
         }
-        else if (reqType == "OrderRequest") {
+        // 同步
+        else if (reqType.equals("OrderRequest")) {
             System.out.println(getReqTypeMapClass.get(reqType));
             QueryOrderInfoImpl orderReq = new QueryOrderInfoImpl();
             try {
                 sr.sampleStart();
-                UdmOrderResponse resp = orderReq.sendOrderSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
+                com.chinamobile.iot.udm.api.reverse.sync.Response resp = orderReq.sendOrderSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
                 resultData = resp.toString();
             } catch (Exception e) {
                 sr.setSuccessful(false);
@@ -129,12 +128,12 @@ public class ReqUtils {
                 sr.sampleEnd();
             }
         }
-        else if (reqType == "ECProdRequest") {
+        else if (reqType.equals("ECProdRequest")) {
             System.out.println(getReqTypeMapClass.get(reqType));
             QueryECProdInfoImpl ecProdReq = new QueryECProdInfoImpl();
             try {
                 sr.sampleStart();
-                UdmECProductResponse resp = ecProdReq.sendECProdSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
+                com.chinamobile.iot.udm.api.reverse.sync.Response resp = ecProdReq.sendECProdSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
                 resultData = resp.toString();
             } catch (Exception e) {
                 sr.setSuccessful(false);
@@ -156,7 +155,7 @@ public class ReqUtils {
     }
 
     // 根据json串获取对应接口
-    public String genReqType(String jsonStr) {
+    private String genReqType(String jsonStr) {
 
         if (jsonStr.contains("UserActivateReq"))                // 激活/待激活
             return "UserActivateReq";
