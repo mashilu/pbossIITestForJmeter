@@ -1,6 +1,11 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.async.*;
+import com.chinamobile.iot.udm.api.reverse.async.Response;
+import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
+import com.chinamobile.iot.udm.api.reverse.async.UdmApnInfo;
+import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceRequest;
+import com.chinamobile.iot.udm.api.reverse.async.Header;
+import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceInfo;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
@@ -22,7 +27,7 @@ public class ApnServiceImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmApnServiceRequest request = CreateApnServiceRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -40,9 +45,16 @@ public class ApnServiceImpl extends AbstractAsyncReq {
     public static UdmApnServiceRequest CreateApnServiceRequest(String xmlStr) {
         UdmApnServiceRequest apnServiceRequest = new UdmApnServiceRequest();
         Element root = XmlParser.getRootElement(xmlStr);
+
         List<Element> apnInfoElements = root.elements("ApnInfo");
-        System.out.println("-----------" + apnInfoElements.size());
         List<UdmApnInfo> apnInfoList = new ArrayList();
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        apnServiceRequest.setHeader(header);
+
         for (Element apnInfoElement : apnInfoElements) {
             UdmApnInfo apnInfo = new UdmApnInfo();
             apnInfo.setSubsID(apnInfoElement.elementTextTrim("SubsId"));

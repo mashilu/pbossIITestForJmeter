@@ -1,5 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
+import com.chinamobile.iot.udm.api.reverse.sync.Header;
 import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmOrderRequest;
@@ -23,7 +24,7 @@ public class QueryOrderInfoImpl {
         Response orderResponse = null;
         NettyTransceiver client = null;
         UdmOrderRequest request = createOrderRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
@@ -41,6 +42,12 @@ public class QueryOrderInfoImpl {
     public static UdmOrderRequest createOrderRequest(String xmlStr) {
         UdmOrderRequest orderRequest = new UdmOrderRequest();
         Element root= XmlParser.getRootElement(xmlStr);
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        orderRequest.setHeader(header);
 
         orderRequest.setProvinceID(root.elementTextTrim("ProvinceID"));
         List<Element> queryOprSeqElements = root.elements("QueryOprSeq");

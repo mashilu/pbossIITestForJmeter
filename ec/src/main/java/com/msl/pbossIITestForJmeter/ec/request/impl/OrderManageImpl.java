@@ -22,7 +22,7 @@ public class OrderManageImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmOrderManageRequest request = createOrderManageRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -41,6 +41,13 @@ public class OrderManageImpl extends AbstractAsyncReq {
         Element root= XmlParser.getRootElement(xmlStr);
         List<Element> personInfoElements = root.elements("PersonInfo");
         List<UdmPersonInfo> personInfoList = new ArrayList();
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        orderManageRequest.setHeader(header);
+
         for (Element personInfoElement : personInfoElements) {
             UdmPersonInfo personInfo = new UdmPersonInfo();
             personInfo.setEcCustID(personInfoElement.elementTextTrim("EcCustID"));

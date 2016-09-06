@@ -4,6 +4,8 @@ import com.chinamobile.iot.udm.api.reverse.async.Response;
 import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
 import com.chinamobile.iot.udm.api.reverse.async.UdmCancelPersonInfo;
 import com.chinamobile.iot.udm.api.reverse.async.UdmCancelUserRequest;
+import com.chinamobile.iot.udm.api.reverse.async.Header;
+
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
@@ -25,7 +27,7 @@ public class CancelUserImpl  extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmCancelUserRequest request = createCancelUserRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -43,9 +45,16 @@ public class CancelUserImpl  extends AbstractAsyncReq {
     public static UdmCancelUserRequest createCancelUserRequest(String xmlStr) {
         UdmCancelUserRequest cancelUserRequest = new UdmCancelUserRequest();
         Element root = XmlParser.getRootElement(xmlStr);
+
         List<Element> cancelPersonInfoElements = root.elements("CancelPersonInfo");
         List<UdmCancelPersonInfo> cancelPersonInfoList = new ArrayList();
-        System.out.println("==============" + cancelPersonInfoElements.size());
+
+        // Header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        cancelUserRequest.setHeader(header);
+
         for (Element cancelPersonInfoElement : cancelPersonInfoElements) {
             UdmCancelPersonInfo cancelPersonInfo = new UdmCancelPersonInfo();
             cancelPersonInfo.setSubsID(cancelPersonInfoElement.elementTextTrim("SubsID"));

@@ -22,7 +22,7 @@ public class SysNumInfoImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmSysNumInfoRequest request = createSysNumInfoRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -43,6 +43,12 @@ public class SysNumInfoImpl extends AbstractAsyncReq {
 
         List<Element> sysNumInfoElements = root.elements("SysNumInfo");
         List<UdmSysNumInfo> sysNumInfoList = new ArrayList();
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        sysNumInfoRequest.setHeader(header);
 
         for (Element sysNumInfoElement : sysNumInfoElements) {
             UdmSysNumInfo sysNumInfo = new UdmSysNumInfo();

@@ -1,5 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
+import com.chinamobile.iot.udm.api.reverse.sync.Header;
 import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmECProdRequest;
@@ -21,7 +22,7 @@ public class QueryECProdInfoImpl {
         Response orderResponse = null;
         NettyTransceiver client = null;
         UdmECProdRequest request = createECProdRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
@@ -42,6 +43,12 @@ public class QueryECProdInfoImpl {
 
         if (root == null)
             return null;
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        ecProdRequest.setHeader(header);
 
         ecProdRequest.setProvinceID(root.elementTextTrim("ProvinceID"));
         ecProdRequest.setQueryType(root.elementTextTrim("QueryType"));

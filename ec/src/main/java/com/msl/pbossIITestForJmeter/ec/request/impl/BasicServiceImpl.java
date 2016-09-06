@@ -1,6 +1,13 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.async.*;
+
+import com.chinamobile.iot.udm.api.reverse.async.Response;
+import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
+import com.chinamobile.iot.udm.api.reverse.async.UdmBasicServiceInfo;
+import com.chinamobile.iot.udm.api.reverse.async.UdmBasicServiceRequest;
+import com.chinamobile.iot.udm.api.reverse.async.UdmBasicServiceProdInfo;
+import com.chinamobile.iot.udm.api.reverse.async.Header;
+
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
@@ -22,7 +29,7 @@ public class BasicServiceImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmBasicServiceRequest request = CreateBasicServiceRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -38,10 +45,18 @@ public class BasicServiceImpl extends AbstractAsyncReq {
     }
 
     public static UdmBasicServiceRequest CreateBasicServiceRequest(String xmlStr) {
-        UdmBasicServiceRequest basicServiceRequest=new  UdmBasicServiceRequest();
+        UdmBasicServiceRequest basicServiceRequest = new  UdmBasicServiceRequest();
         Element root= XmlParser.getRootElement(xmlStr);
+
         List<Element> basicServiceInfoElements = root.elements("BasicServiceInfo");
-        List< UdmBasicServiceInfo> basicServiceInfoList = new ArrayList();
+        List<UdmBasicServiceInfo> basicServiceInfoList = new ArrayList();
+
+        // Header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        basicServiceRequest.setHeader(header);
+
         for (Element basicServiceInfoElement : basicServiceInfoElements) {
             UdmBasicServiceInfo basicServiceInfo = new  UdmBasicServiceInfo();
 

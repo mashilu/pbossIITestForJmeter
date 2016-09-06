@@ -1,9 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.async.Response;
-import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
-import com.chinamobile.iot.udm.api.reverse.async.UdmUserStatusChgRequest;
-import com.chinamobile.iot.udm.api.reverse.async.UdmUserStatusInfo;
+import com.chinamobile.iot.udm.api.reverse.async.*;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
@@ -25,7 +22,7 @@ public class UserStatusChgImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmUserStatusChgRequest request = createUserStatusChgRequest(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -43,9 +40,16 @@ public class UserStatusChgImpl extends AbstractAsyncReq {
     public static UdmUserStatusChgRequest createUserStatusChgRequest(String str) {
         UdmUserStatusChgRequest userStatusChgReq = new UdmUserStatusChgRequest();
         Element root= XmlParser.getRootElement(str);
-        System.out.println(root);
+
         List<Element> userStatusInfoElements=root.elements("UserStatusInfo");
         List<UdmUserStatusInfo> userStatusInfoList = new ArrayList();
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        userStatusChgReq.setHeader(header);
+
         for(Element userStatusInfoElement: userStatusInfoElements)
         {
             UdmUserStatusInfo userStatusInfo = new UdmUserStatusInfo();

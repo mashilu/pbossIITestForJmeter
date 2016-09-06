@@ -1,9 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.async.Response;
-import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
-import com.chinamobile.iot.udm.api.reverse.async.UdmUserActivateInfo;
-import com.chinamobile.iot.udm.api.reverse.async.UdmUserActivateRequest;
+import com.chinamobile.iot.udm.api.reverse.async.*;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
@@ -25,7 +22,7 @@ public class UserActivateImpl extends AbstractAsyncReq {
         Response response = null;
         NettyTransceiver client = null;
         UdmUserActivateRequest request = CreateUserActivateReq(jsonStr);
-        System.out.print("Request:" + request);
+        System.out.println("Request:" + request);
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
             ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
@@ -45,6 +42,12 @@ public class UserActivateImpl extends AbstractAsyncReq {
         Element root= XmlParser.getRootElement(xmlStr);
         List<Element> userActivateInfoElements = root.elements("UserActivateInfo");
         List< UdmUserActivateInfo> userActivateInfoList = new ArrayList();
+
+        // header
+        Header header = new Header();
+        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
+        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        userActivateRequest.setHeader(header);
 
         for (Element userActivateInfoElement : userActivateInfoElements) {
             UdmUserActivateInfo userActivateInfo = new  UdmUserActivateInfo();
