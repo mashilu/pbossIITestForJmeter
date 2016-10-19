@@ -1,6 +1,11 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.sync.*;
+import com.chinamobile.iot.udm.api.reverse.sync.Header;
+import com.chinamobile.iot.udm.api.reverse.sync.Response;
+import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
+import com.chinamobile.iot.udm.api.reverse.sync.UdmLeftFlowInfo;
+import com.chinamobile.iot.udm.api.reverse.sync.UdmLeftFlowRequest;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -16,23 +21,11 @@ import java.util.List;
  * 余量查询
  */
 public class LeftFlowRequestImpl {
-    public Response sendLeftFlowRequest(String ip, int port, String jsonStr) {
-        Response leftFlowResponse = null;
-        NettyTransceiver client = null;
+
+    public void sendLeftFlowRequest(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmLeftFlowRequest request = createLeftFlowRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
-            leftFlowResponse = proxy.queryLeftFlow(request);
-            System.out.println("Result: " + leftFlowResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return leftFlowResponse;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     private static UdmLeftFlowRequest createLeftFlowRequest(String xmlStr) {
@@ -46,9 +39,7 @@ public class LeftFlowRequestImpl {
         List<UdmLeftFlowInfo> leftFlowInfoList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         leftFlowRequest.setHeader(header);
 
         for (Element leftFlowInfoElement : leftFlowInfoElements) {

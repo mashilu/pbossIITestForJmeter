@@ -14,6 +14,6 @@ public class TestOrderRequest {
                 "</OrderRequest>";
 
         QueryOrderInfoImpl orderInfo = new QueryOrderInfoImpl();
-        orderInfo.sendOrderSyncReq("192.168.200.20", 8082, str);
+        orderInfo.sendOrderSyncReq("192.168.200.20", 8082, str, 1, 1);
     }
 }

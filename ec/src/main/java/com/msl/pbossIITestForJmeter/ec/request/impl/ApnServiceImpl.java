@@ -7,6 +7,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceRequest;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceInfo;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -23,23 +24,10 @@ import java.util.List;
  */
 public class ApnServiceImpl extends AbstractAsyncReq {
 
-    public Response sendAsyncReq(String ip, int port, String jsonStr) {
-        Response response = null;
-        NettyTransceiver client = null;
+    public void sendAsyncReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmApnServiceRequest request = CreateApnServiceRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
-            response = proxy.applyApnService(request);
-            System.out.println("Result: " + response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return response;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     public static UdmApnServiceRequest CreateApnServiceRequest(String xmlStr) {
@@ -50,9 +38,7 @@ public class ApnServiceImpl extends AbstractAsyncReq {
         List<UdmApnInfo> apnInfoList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         apnServiceRequest.setHeader(header);
 
         for (Element apnInfoElement : apnInfoElements) {

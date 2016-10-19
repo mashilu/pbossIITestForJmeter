@@ -1,6 +1,7 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
 import com.chinamobile.iot.udm.api.reverse.sync.*;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -16,23 +17,11 @@ import java.util.List;
  * 余额查询接口
  */
 public class QryInfoRequestImpl {
-    public Response sendQryInfoRequest(String ip, int port, String jsonStr) {
-        Response qryInfoResponse = null;
-        NettyTransceiver client = null;
+
+    public void sendQryInfoRequest(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmQryInfoRequest request = createQryInfoRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
-            qryInfoResponse = proxy.queryAccBlance(request);
-            System.out.println("Result: " + qryInfoResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return qryInfoResponse;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     private static UdmQryInfoRequest createQryInfoRequest(String xmlStr) {
@@ -46,9 +35,7 @@ public class QryInfoRequestImpl {
         List<UdmQryInfoReq> qryInfoReqList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         qryInfoRequest.setHeader(header);
 
         for (Element qryInfoReqElement : qryInfoReqElements) {

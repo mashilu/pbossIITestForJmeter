@@ -4,6 +4,7 @@ import com.chinamobile.iot.udm.api.reverse.sync.Header;
 import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmOrderRequest;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -20,23 +21,10 @@ import java.util.List;
  */
 public class QueryOrderInfoImpl {
 
-    public Response sendOrderSyncReq(String ip, int port, String jsonStr) {
-        Response orderResponse = null;
-        NettyTransceiver client = null;
+    public void sendOrderSyncReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmOrderRequest request = createOrderRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
-            orderResponse = proxy.queryOrder(request);
-            System.out.println("Result: " + orderResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return orderResponse;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     public static UdmOrderRequest createOrderRequest(String xmlStr) {
@@ -44,9 +32,7 @@ public class QueryOrderInfoImpl {
         Element root= XmlParser.getRootElement(xmlStr);
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         orderRequest.setHeader(header);
 
         orderRequest.setProvinceID(root.elementTextTrim("ProvinceID"));

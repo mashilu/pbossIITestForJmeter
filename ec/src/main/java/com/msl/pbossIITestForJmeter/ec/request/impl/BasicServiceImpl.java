@@ -9,6 +9,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmBasicServiceProdInfo;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -25,23 +26,10 @@ import java.util.List;
  */
 public class BasicServiceImpl extends AbstractAsyncReq {
 
-    public Response sendAsyncReq(String ip, int port, String jsonStr) {
-        Response response = null;
-        NettyTransceiver client = null;
+    public void sendAsyncReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmBasicServiceRequest request = CreateBasicServiceRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
-            response = proxy.applyBasicService(request);
-            System.out.println("Result: " + response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return response;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     public static UdmBasicServiceRequest CreateBasicServiceRequest(String xmlStr) {
@@ -52,9 +40,7 @@ public class BasicServiceImpl extends AbstractAsyncReq {
         List<UdmBasicServiceInfo> basicServiceInfoList = new ArrayList();
 
         // Header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         basicServiceRequest.setHeader(header);
 
         for (Element basicServiceInfoElement : basicServiceInfoElements) {

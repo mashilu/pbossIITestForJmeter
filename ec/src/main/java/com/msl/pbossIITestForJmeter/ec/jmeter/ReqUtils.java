@@ -19,6 +19,8 @@ public class ReqUtils {
     private String serverIP = "";
     private String serverPort = "";
     private String jsonStr = "";
+    private String threadNum = "";
+    private String msgNum = "";
     private AbstractAsyncReq req = null;
     private JavaSamplerContext arg = null;
     private String reqType = "";
@@ -70,6 +72,8 @@ public class ReqUtils {
         args.addArgument("ip", "localhost");
         args.addArgument("port", "8888");
         args.addArgument("json", "");
+        args.addArgument("thread", "1");
+        args.addArgument("message", "1");
 
         return args;
     }
@@ -81,10 +85,15 @@ public class ReqUtils {
         serverIP = arg.getParameter("ip");
         serverPort = arg.getParameter("port");
         jsonStr = arg.getParameter("json");
+        threadNum = arg.getParameter("thread");
+        msgNum = arg.getParameter("message");
+
 
         if (serverIP == null || serverIP.trim().length() == 0 ||
                 serverPort == null || serverPort.trim().length() == 0 ||
-                jsonStr == null || jsonStr.trim().length() == 0) {
+                jsonStr == null || jsonStr.trim().length() == 0 ||
+                threadNum == null || threadNum.trim().length() == 0 ||
+                msgNum == null || msgNum.trim().length() == 0) {
             resultData = "parameter error";
             sr.setResponseData(resultData, null);
             sr.setDataType(SampleResult.TEXT);
@@ -119,9 +128,9 @@ public class ReqUtils {
 
             try {
                 sr.sampleStart();
-                Response resp = req.sendAsyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
+                req.sendAsyncReq(serverIP, Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
                 //JSONObject jsonObject = JSONObject.fromObject(resp);
-                resultData = resp.toString();
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();
@@ -134,8 +143,8 @@ public class ReqUtils {
             QueryOrderInfoImpl orderReq = new QueryOrderInfoImpl();
             try {
                 sr.sampleStart();
-                com.chinamobile.iot.udm.api.reverse.sync.Response resp = orderReq.sendOrderSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
-                resultData = resp.toString();
+                orderReq.sendOrderSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();
@@ -148,9 +157,8 @@ public class ReqUtils {
             QueryECProdInfoImpl ecProdReq = new QueryECProdInfoImpl();
             try {
                 sr.sampleStart();
-                com.chinamobile.iot.udm.api.reverse.sync.Response resp =
-                        ecProdReq.sendECProdSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr);
-                resultData = resp.toString();
+                ecProdReq.sendECProdSyncReq(serverIP, Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();
@@ -163,9 +171,10 @@ public class ReqUtils {
             QueryHSSUserStatusInfoImpl queryHSSUserStatusInfoReq = new QueryHSSUserStatusInfoImpl();
             try {
                 sr.sampleStart();
-                com.chinamobile.iot.udm.api.reverse.sync.Response resp =
-                        queryHSSUserStatusInfoReq.sendQueryHSSUserStatusInfoReq(serverIP, Integer.parseInt(serverPort), jsonStr);
-                resultData = resp.toString();
+                queryHSSUserStatusInfoReq.sendQueryHSSUserStatusInfoReq(
+                        serverIP,
+                        Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();
@@ -178,9 +187,8 @@ public class ReqUtils {
             QryInfoRequestImpl qryInfoRequest = new QryInfoRequestImpl();
             try {
                 sr.sampleStart();
-                com.chinamobile.iot.udm.api.reverse.sync.Response resp =
-                        qryInfoRequest.sendQryInfoRequest(serverIP, Integer.parseInt(serverPort), jsonStr);
-                resultData = resp.toString();
+                qryInfoRequest.sendQryInfoRequest(serverIP, Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();
@@ -193,9 +201,8 @@ public class ReqUtils {
             LeftFlowRequestImpl leftFlowRequest = new LeftFlowRequestImpl();
             try {
                 sr.sampleStart();
-                com.chinamobile.iot.udm.api.reverse.sync.Response resp =
-                        leftFlowRequest.sendLeftFlowRequest(serverIP, Integer.parseInt(serverPort), jsonStr);
-                resultData = resp.toString();
+                leftFlowRequest.sendLeftFlowRequest(serverIP, Integer.parseInt(serverPort), jsonStr,
+                        Integer.parseInt(threadNum), Integer.parseInt(msgNum));
             } catch (Exception e) {
                 sr.setSuccessful(false);
                 e.printStackTrace();

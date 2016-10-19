@@ -27,6 +27,6 @@ public class TestBasicServiceImpl {
 
 
         BasicServiceImpl basicService = new BasicServiceImpl();
-        basicService.sendAsyncReq("localhost", 65111, str);
+        basicService.sendAsyncReq("localhost", 65111, str, 1, 1);
     }
 }

@@ -16,6 +16,6 @@ public class TestECProdRequest {
                 "</ECProdRequest>";
 
         QueryECProdInfoImpl ecProdInfo = new QueryECProdInfoImpl();
-        ecProdInfo.sendECProdSyncReq("192.168.200.20", 8082, str);
+        ecProdInfo.sendECProdSyncReq("192.168.200.20", 8082, str, 1, 1);
     }
 }

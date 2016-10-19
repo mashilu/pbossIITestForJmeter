@@ -32,6 +32,6 @@ public class TestApnServiceImpl {
 //        cancelUser.sendAsyncReq("localhost", 65111, str);
 
         ApnServiceImpl apnService = new ApnServiceImpl();
-        apnService.sendAsyncReq("192.168.200.20", 8081, str);
+        apnService.sendAsyncReq("192.168.200.20", 8081, str, 1, 1);
     }
 }

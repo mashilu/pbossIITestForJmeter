@@ -4,6 +4,7 @@ import com.chinamobile.iot.udm.api.reverse.sync.Header;
 import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmECProdRequest;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -18,23 +19,10 @@ import java.net.InetSocketAddress;
  */
 public class QueryECProdInfoImpl {
 
-    public Response sendECProdSyncReq(String ip, int port, String jsonStr) {
-        Response orderResponse = null;
-        NettyTransceiver client = null;
+    public void sendECProdSyncReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmECProdRequest request = createECProdRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
-            orderResponse = proxy.queryECProd(request);
-            System.out.println("Result: " + orderResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return orderResponse;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     private static UdmECProdRequest createECProdRequest(String xmlStr) {
@@ -45,9 +33,7 @@ public class QueryECProdInfoImpl {
             return null;
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         ecProdRequest.setHeader(header);
 
         ecProdRequest.setProvinceID(root.elementTextTrim("ProvinceID"));

@@ -4,6 +4,7 @@ import com.chinamobile.iot.udm.api.reverse.sync.Header;
 import com.chinamobile.iot.udm.api.reverse.sync.Response;
 import com.chinamobile.iot.udm.api.reverse.sync.ReverseSync;
 import com.chinamobile.iot.udm.api.reverse.sync.UdmQueryHSSUserStatusInfoRequest;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -17,23 +18,10 @@ import java.net.InetSocketAddress;
  */
 public class QueryHSSUserStatusInfoImpl {
 
-    public Response sendQueryHSSUserStatusInfoReq(String ip, int port, String jsonStr) {
-        Response orderResponse = null;
-        NettyTransceiver client = null;
+    public void sendQueryHSSUserStatusInfoReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmQueryHSSUserStatusInfoRequest request = createQueryHSSUserStatusInfoRequest(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseSync proxy = SpecificRequestor.getClient(ReverseSync.class, client);
-            orderResponse = proxy.queryHSSUserStatusInfo(request);
-            System.out.println("Result: " + orderResponse);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return orderResponse;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     private static UdmQueryHSSUserStatusInfoRequest createQueryHSSUserStatusInfoRequest(String xmlStr) {
@@ -44,9 +32,7 @@ public class QueryHSSUserStatusInfoImpl {
             return null;
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         queryHSSUserStatusInfoRequest.setHeader(header);
 
         queryHSSUserStatusInfoRequest.setSubsID(root.elementTextTrim("SubsID"));

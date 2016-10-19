@@ -7,6 +7,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmCardNumInfo;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -22,23 +23,10 @@ import java.util.List;
  * 补换卡
  */
 public class CardNumInfoReqImpl extends AbstractAsyncReq {
-    public Response sendAsyncReq(String ip, int port, String jsonStr) {
-        Response cardNumInfoResp = null;
-        NettyTransceiver client = null;
+    public void sendAsyncReq(String ip, int port, String jsonStr, int threadNum, int msgNum) {
         UdmCardNumInfoRequest request = createCardNumInfoReq(jsonStr);
         System.out.println("Request:" + request);
-        try {
-            client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            ReverseAsync proxy = SpecificRequestor.getClient(ReverseAsync.class, client);
-            cardNumInfoResp = proxy.applyCardNumInfo(request);
-            System.out.println("Result: " + cardNumInfoResp);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            client.close(true);
-        }
-
-        return cardNumInfoResp;
+        Handler.start(request, ip, port, threadNum, msgNum);
     }
 
     public static UdmCardNumInfoRequest createCardNumInfoReq(String xmlStr) {
@@ -49,9 +37,7 @@ public class CardNumInfoReqImpl extends AbstractAsyncReq {
         List<UdmCardNumInfo> cardNumInfoLists = new ArrayList();
 
         // Header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         cardNumInfoRequest.setHeader(header);
 
         for (Element e : cardNumInfoElemets) {
