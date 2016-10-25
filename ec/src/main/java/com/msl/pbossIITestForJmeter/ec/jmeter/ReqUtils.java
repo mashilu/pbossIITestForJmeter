@@ -1,6 +1,5 @@
 package com.msl.pbossIITestForJmeter.ec.jmeter;
 
-import com.chinamobile.iot.udm.api.reverse.async.Response;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.impl.*;
 import org.apache.jmeter.config.Arguments;

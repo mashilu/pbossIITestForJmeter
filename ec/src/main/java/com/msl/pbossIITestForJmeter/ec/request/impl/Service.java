@@ -1,7 +1,6 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
 import com.chinamobile.iot.udm.api.reverse.async.*;
-
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;

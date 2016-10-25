@@ -4,12 +4,7 @@ import com.chinamobile.iot.udm.api.reverse.async.*;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
-import org.apache.avro.ipc.NettyTransceiver;
-import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.dom4j.Element;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 

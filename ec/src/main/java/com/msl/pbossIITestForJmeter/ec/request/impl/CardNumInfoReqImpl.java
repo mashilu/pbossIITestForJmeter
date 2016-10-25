@@ -1,20 +1,12 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
-import com.chinamobile.iot.udm.api.reverse.async.Response;
 import com.chinamobile.iot.udm.api.reverse.async.UdmCardNumInfoRequest;
-import com.chinamobile.iot.udm.api.reverse.async.ReverseAsync;
 import com.chinamobile.iot.udm.api.reverse.async.UdmCardNumInfo;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
-
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
 import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
-import org.apache.avro.ipc.NettyTransceiver;
-import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.dom4j.Element;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
