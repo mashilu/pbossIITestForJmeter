@@ -7,6 +7,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceRequest;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 import com.chinamobile.iot.udm.api.reverse.async.UdmApnServiceInfo;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -50,9 +51,7 @@ public class ApnServiceImpl extends AbstractAsyncReq {
         List<UdmApnInfo> apnInfoList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         apnServiceRequest.setHeader(header);
 
         for (Element apnInfoElement : apnInfoElements) {

@@ -1,6 +1,7 @@
 package com.msl.pbossIITestForJmeter.ec.request.impl;
 
 import com.chinamobile.iot.udm.api.reverse.sync.*;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -46,9 +47,7 @@ public class QryInfoRequestImpl {
         List<UdmQryInfoReq> qryInfoReqList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getSyncHeader(root);
         qryInfoRequest.setHeader(header);
 
         for (Element qryInfoReqElement : qryInfoReqElements) {

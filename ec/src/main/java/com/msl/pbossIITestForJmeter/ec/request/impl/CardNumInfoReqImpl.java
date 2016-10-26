@@ -7,6 +7,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmCardNumInfo;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -49,9 +50,7 @@ public class CardNumInfoReqImpl extends AbstractAsyncReq {
         List<UdmCardNumInfo> cardNumInfoLists = new ArrayList();
 
         // Header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         cardNumInfoRequest.setHeader(header);
 
         for (Element e : cardNumInfoElemets) {

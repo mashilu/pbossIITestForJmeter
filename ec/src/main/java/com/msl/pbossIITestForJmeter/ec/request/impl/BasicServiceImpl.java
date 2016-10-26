@@ -9,6 +9,7 @@ import com.chinamobile.iot.udm.api.reverse.async.UdmBasicServiceProdInfo;
 import com.chinamobile.iot.udm.api.reverse.async.Header;
 
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -52,9 +53,7 @@ public class BasicServiceImpl extends AbstractAsyncReq {
         List<UdmBasicServiceInfo> basicServiceInfoList = new ArrayList();
 
         // Header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         basicServiceRequest.setHeader(header);
 
         for (Element basicServiceInfoElement : basicServiceInfoElements) {

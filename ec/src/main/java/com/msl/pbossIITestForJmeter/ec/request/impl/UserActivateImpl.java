@@ -2,6 +2,7 @@ package com.msl.pbossIITestForJmeter.ec.request.impl;
 
 import com.chinamobile.iot.udm.api.reverse.async.*;
 import com.msl.pbossIITestForJmeter.ec.request.AbstractAsyncReq;
+import com.msl.pbossIITestForJmeter.ec.request.utils.Utils;
 import com.msl.pbossIITestForJmeter.ec.request.utils.XmlParser;
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
@@ -44,9 +45,7 @@ public class UserActivateImpl extends AbstractAsyncReq {
         List< UdmUserActivateInfo> userActivateInfoList = new ArrayList();
 
         // header
-        Header header = new Header();
-        header.setApplicationId(root.element("Header").elementTextTrim("applicationId"));
-        header.setOriginHost(root.element("Header").elementTextTrim("originHost"));
+        Header header = Utils.getAsyncHeader(root);
         userActivateRequest.setHeader(header);
 
         for (Element userActivateInfoElement : userActivateInfoElements) {
